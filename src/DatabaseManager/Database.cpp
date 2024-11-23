@@ -1,0 +1,4 @@
+namespace YouSQL
+{
+
+} // namespace YouSQL
