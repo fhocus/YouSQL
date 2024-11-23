@@ -9,7 +9,9 @@
 class Disk
 {
 public:
-  Disk(std::string path);
+  Disk();
+  // Disk(std::string path);
+  Disk(int capacity, int block_capacity);
   ~Disk();
 
   void read(std::string path);
@@ -19,6 +21,8 @@ private:
   std::string path;
   std::ifstream file;
   std::ofstream fileOut;
+  int capacity; //bytes
+  int block_capacity; //bytes
 };
 
 #include "Disk.cpp"
