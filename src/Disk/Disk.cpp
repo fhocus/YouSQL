@@ -2,7 +2,7 @@
 #include <filesystem>
 
 Disk::Disk() {
-    this->capacity = 2 * 1024 * 1024; //10MB
+    this->capacity = 2 * 1024 * 1024; //2MB
     this->block_capacity = 4 * 1024; //4KB
     this->num_blocks = capacity / block_capacity;
     this->path = "../db/disco1";
@@ -49,4 +49,16 @@ void Disk::create_blocks() {
     } catch (const std::exception& e) {
         std::cerr << "Error al crear bloques: " << e.what() << std::endl;
     }
+}
+
+int Disk::getBlockCapacity() {
+    return this->block_capacity;
+}
+
+int Disk::getNumBlocks() {
+    return this->num_blocks;
+}
+
+std::string Disk::getBlockPath(int block_index) {
+    return this->path + "/bloque" + std::to_string(block_index) + ".txt";
 }

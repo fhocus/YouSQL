@@ -4,7 +4,6 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 class Disk
 {
@@ -13,7 +12,9 @@ public:
   // Disk(std::string path);
   Disk(int capacity, int block_capacity, std::string path);
   ~Disk();
-
+  int getBlockCapacity();
+  int getNumBlocks();
+  std::string getBlockPath(int block_index);
   // void read(std::string path);
   // void write(std::string path);
 
@@ -31,7 +32,7 @@ private:
 //   void updateFreeListHead(int newHead);
 //   int allocateRecord();
 //   void initializeFile();
-// };
+};
 
 #include "Disk.cpp"
 
