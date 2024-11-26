@@ -9,10 +9,18 @@
 
 #include "Disk.h"
 
-struct BlockHeader {
-    int record_count;       
+struct FixedBlockHeader {
+    int record_count;      
     int free_space_end;     
-    std::vector<int> record_offsets; 
+    std::vector<int> free_list; 
+};
+
+
+struct VariableBlockHeader {
+    int record_count;                       
+    int free_space_end;    
+    int slot_directory_end;               
+    std::vector<std::pair<int, int>> slots;  // Tabla de ranuras <offset, tamaño>
 };
 
 class DiskManager {
@@ -30,19 +38,20 @@ public:
 
     // HeapFile 
     void initializeHeapFile();
-    int findFreeBlock(int record_size);
+    int findFreeBlock(int record_size, bool is_fixed);
 
 private:
     Disk disk;
-    std::vector<BlockHeader> block_headers; 
-    std::unordered_map<int, int> free_space_map; 
+    std::vector<FixedBlockHeader> fixed_block_headers;  
+    std::vector<VariableBlockHeader> variable_block_headers;   std::unordered_map<int, int> fixed_free_space_map;
+    std::unordered_map<int, int> variable_free_space_map;
     int block_size;
 
-    void loadHeaders();
-    void updateFreeSpaceMap(int block_index);
+    void loadHeaders(bool is_fixed);
+    void updateFreeSpaceMap(int block_index, bool is_fixed);
     void writeBlock(int block_index, const std::vector<char>& block_data);
     std::vector<char> readBlock(int block_index);
-    int findSlotInBlock(int block_index, int record_size);
+    int findSlotInBlock(int block_index, int record_size, bool is_fixed);
 };
 
 #endif 
