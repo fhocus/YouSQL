@@ -9,31 +9,30 @@ class Disk
 {
 public:
   Disk();
-  // Disk(std::string path);
-  Disk(int capacity, int block_capacity, std::string path);
+  Disk(int numPlatters, int tracksPerSurface, int sectorsPerTrack,
+       int bytesPerSector, int bytesPerBlocks, std::string disk_name);
   ~Disk();
-  int getBlockCapacity();
-  int getNumBlocks();
-  std::string getBlockPath(int block_index);
-  // void read(std::string path);
-  // void write(std::string path);
+  int getNumPlatters();
+  int getTracksPerSurface();
+  int getSectorsPerTrack();
+  int getBytesPerSector();
 
+  int getSectorPerBlock();
+  int getBytesPerBlock();
+  int getBlockPerTrack();
+  std::string getPath();
 
 private:
   std::string path;
-  // std::ifstream file;
-  // std::ofstream fileOut;
-  int capacity; //bytes
-  int block_capacity; //bytes
-  int num_blocks;
 
-  void create_blocks();
+  int numPlatters;
+  int tracksPerSurface;
+  int sectorsPerTrack;
+  int bytesPerSector;
 
-//   void updateFreeListHead(int newHead);
-//   int allocateRecord();
-//   void initializeFile();
+  int sectorPerBlock;
+  int bytesPerBlock;
+  int blockPerTrack;
 };
-
-#include "Disk.cpp"
 
 #endif
