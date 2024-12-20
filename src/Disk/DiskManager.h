@@ -6,52 +6,114 @@
 #include <unordered_map>
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <map>
+#include <tuple>
+#include <list>
+#include <optional>
+#include <cstdio>
+#include <iomanip>
+#include <filesystem>
 
 #include "Disk.h"
 
-struct FixedBlockHeader {
-    int record_count;      
-    int free_space_end;     
-    std::vector<int> free_list; 
+namespace fs = std::filesystem;
+
+#define PATH fs::current_path() / "../db"
+
+struct Node {
+    int numBlock;      
+    int freeSpace;     
+    std::unordered_map<int, std::tuple<int, char, int, bool>> sectors; 
+
+    Node* prev;
+    Node* next;
+
+    Node(int blockNumber, int freeSpace)
+        : numBlock(blockNumber), freeSpace(freeSpace), prev(nullptr), next(nullptr) {}
+
+    void addSector(int idSector, int platter, char surface, int track) {
+        sectors[idSector] = std::make_tuple(platter, surface, track, false);
+    }
 };
 
+struct sectorHeader {
+    std::optional<int> id;
+    std::optional<int> availableSpace;
+    std::optional<std::string> freeSpaces;
+    std::optional<int> numRecords; 
 
-struct VariableBlockHeader {
-    int record_count;                       
-    int free_space_end;    
-    int slot_directory_end;               
-    std::vector<std::pair<int, int>> slots;  // Tabla de ranuras <offset, tamaño>
+    std::string toString() const {
+        std::string header;
+        if(id.has_value()) {
+            header += std::to_string(id.value()) + "#";
+        }
+        if(availableSpace.has_value()) {
+            header += std::to_string(availableSpace.value()) + "#";
+        }
+        if(freeSpaces.has_value()) {
+            header += freeSpaces.value() + "#";
+        }
+        if(numRecords.has_value()) {
+            header += std::to_string(numRecords.value()) + "#";
+        }
+        return header;
+    }
 };
 
 class DiskManager {
 public:
-    DiskManager(Disk& disk);
+    DiskManager();
+    DiskManager(bool, int, int, int, int, int);
     ~DiskManager();
 
-    // Fixed-length record 
-    void insertFixedLengthRecord(const std::string& record, int record_size);
-    void deleteFixedLengthRecord(int block_index, int record_index);
+    void currentLocationCheck();
+    void createDiskStructure();
+    std::vector<std::string> blockToVector(int blockid);
 
-    // Variable-length record 
-    void insertVariableLengthRecord(const std::string& record);
-    void deleteVariableLengthRecord(int block_index, int record_index);
+    //heapfile
+    void insertBlocktoFreeHeapFile(int, int, const std::unordered_map<int, std::tuple<int, char, int, bool>>&);
+    void insertBlocktoFullHeapFile(int, int, const std::unordered_map<int, std::tuple<int, char, int, bool>>&);
+    Node* searchFreeSpace(int);
+    Node* searchFullSpace(int);
+    Node* searchBlockHeapFile(int);
+    void decreaseSpaceofBlock(int);
+    void increaseSpaceofBlock(int);        
+    void deleteBlockHeapFile(Node*&, Node*&, Node*);       
+    void moveBlockFreeToFull(Node*);        
+    void moveBlockFullToFree(Node*);        
+    void emptyHeapFile(Node*&, Node*&); 
+    void emptyHeapFile();
+    void saveHeapFile();
+    void saveInformationInFile(Node*, std::ofstream&);
+    void recoverInformationFromHeapFile();
 
-    // HeapFile 
-    void initializeHeapFile();
-    int findFreeBlock(int record_size, bool is_fixed);
+    //fixed-length
+    void setSchemeSize(const std::string&);
+    void setRecordLength(int);
+    void useFixedLength(const std::string);
+    void sectorInsertFL(const std::string&, int, Node*&);
+    void updateLineFL(const std::string&, const std::string&, int);
+    void updateSectorFL();
 
 private:
     Disk disk;
-    std::vector<FixedBlockHeader> fixed_block_headers;  
-    std::vector<VariableBlockHeader> variable_block_headers;   std::unordered_map<int, int> fixed_free_space_map;
-    std::unordered_map<int, int> variable_free_space_map;
-    int block_size;
+    bool isVariable;
+    int recordLength; //si es de longitud fija
 
-    void loadHeaders(bool is_fixed);
-    void updateFreeSpaceMap(int block_index, bool is_fixed);
-    void writeBlock(int block_index, const std::vector<char>& block_data);
-    std::vector<char> readBlock(int block_index);
-    int findSlotInBlock(int block_index, int record_size, bool is_fixed);
+    int currPlatter;
+    char currSurface;
+    int currTrack;
+    int currSector;
+    int currBlock;
+
+    //heapfile
+    Node* freeSpaceBegin;
+    Node* freeSpaceEnd;
+    Node* fullSpaceBegin;
+    Node* fullSpaceEnd;
+
+    int* dataTypeSize;
 };
 
 #endif 

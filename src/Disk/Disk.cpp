@@ -2,7 +2,6 @@
 #include <filesystem>
 
 Disk::Disk() {
-    this->path = "../db";
 
     this->numPlatters = 2;
     this->tracksPerSurface = 8;
@@ -10,12 +9,10 @@ Disk::Disk() {
     this->bytesPerSector = 4096;
 
     this->bytesPerBlock = 4 * 1024; //4KB
-    this->sectorPerBlock = this->bytesPerBlock / this->bytesPerSector;
-    this->blockPerTrack = this->sectorsPerTrack / this->sectorPerBlock;
+    this->sectorPerBlock = bytesPerBlock / bytesPerSector;
 }
 
-Disk::Disk(int numPlatters, int tracksPerSurface, int sectorsPerTrack, 
-            int bytesPerSector, int bytesPerBlocks, std::string path = "../db") {
+Disk::Disk(int numPlatters, int tracksPerSurface, int sectorsPerTrack, int bytesPerSector, int bytesPerBlock) {
     this->numPlatters = numPlatters;
     this->tracksPerSurface = tracksPerSurface;
     this->sectorsPerTrack = sectorsPerTrack;
@@ -24,20 +21,10 @@ Disk::Disk(int numPlatters, int tracksPerSurface, int sectorsPerTrack,
     this->bytesPerBlock = bytesPerBlock;
     this->path = path;
 
-
-    this->sectorPerBlock = this->bytesPerBlock / this->bytesPerSector;
-    this->blockPerTrack = this->sectorsPerTrack / this->sectorPerBlock;
+    this->sectorPerBlock = bytesPerBlock / bytesPerSector;
 }
 
 Disk::~Disk() {}
-
-int Disk::getBytesPerBlock() {
-    return this->bytesPerBlock;
-}
-
-int Disk::getSectorPerBlock() {
-    return this->sectorPerBlock;
-}
 
 int Disk::getNumPlatters() {
     return this->numPlatters;
@@ -53,10 +40,23 @@ int Disk::getSectorsPerTrack() {
 
 int Disk::getBytesPerSector() {
     return this->bytesPerSector;
-}   
+}  
 
-int Disk::getBlockPerTrack() {
-    return this->blockPerTrack;
+int Disk::getBytesPerBlock() {
+    return this->bytesPerBlock;
+}
+
+int Disk::getSectorPerBlock() {
+    return sectorPerBlock;
+}
+
+int Disk::getTotalBlocks() {
+    return getTotalSectors() / getSectorPerBlock();
+}
+
+int Disk::getTotalSectors() {
+    int total = this->numPlatters * 2 * this->tracksPerSurface * this->sectorsPerTrack;
+    return total;
 }
 
 std::string Disk::getPath() {

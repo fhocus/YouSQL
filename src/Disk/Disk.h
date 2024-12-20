@@ -10,7 +10,7 @@ class Disk
 public:
   Disk();
   Disk(int numPlatters, int tracksPerSurface, int sectorsPerTrack,
-       int bytesPerSector, int bytesPerBlocks, std::string disk_name);
+       int bytesPerSector, int bytesPerBlocks);
   ~Disk();
   int getNumPlatters();
   int getTracksPerSurface();
@@ -19,20 +19,20 @@ public:
 
   int getSectorPerBlock();
   int getBytesPerBlock();
-  int getBlockPerTrack();
+  int getTotalSectors();
+  int getTotalBlocks();
   std::string getPath();
 
 private:
-  std::string path;
+  std::string path = "../db";
 
   int numPlatters;
   int tracksPerSurface;
   int sectorsPerTrack;
   int bytesPerSector;
-
-  int sectorPerBlock;
   int bytesPerBlock;
   int blockPerTrack;
+  int sectorPerBlock;
 };
 
 #endif
