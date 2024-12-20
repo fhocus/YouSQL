@@ -1,24 +1,38 @@
+#pragma once
 #ifndef BUFFERPOOL_H
 #define BUFFERPOOL_H
+#include "frame.h"
 
-#include <string>
-#include <fstream>
-#include <iostream>
 #include <vector>
 
 class BufferPool
 {
 public:
-  BufferPool(std::string path);
+  BufferPool(int, int);
   ~BufferPool();
 
-  void read(std::string path);
-  void write(std::string path);
+  int findUnpinnedFrame();
+  void fillFrame(std::vector<std::string>, int);
+  void pinFrame(int);
+  void unpinFrame(int);
+  void incrementFrame(int);
+  void decrementFrame(int);
+  void resetFrame(int);
+  void dirtyFrame(int);
+  void resetBuffer();
+  bool areAllFramesUsed();
+  void updateIndex();
 
+  std::vector<Frame> getBuffer();
+  Frame* getFrame(int);
+  int getBufferSize(); 
+  int getcurrIndex(); 
+
+  int CLOCK();
 private:
-  std::string path;
-  std::ifstream file;
-  std::ofstream fileOut;
+  std::vector<Frame> buffer;
+  int currIndex; 
+  int id;
 };
 
 #endif

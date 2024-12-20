@@ -39,6 +39,10 @@ void Frame::decrementPinCount() {
         this->pinCount--;
 }
 
+void Frame::dirty() {
+    this->dirtyFlag = true;
+}
+
 void Frame::setPinCount(char pinCount) {
     pinCount = pinCount - 'a' + 'A';
     this->countPin.push(pinCount);

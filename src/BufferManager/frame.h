@@ -17,6 +17,7 @@ public:
     void unpin();
     void incrementPinCount();
     void decrementPinCount();
+    void dirty();
 
     void setPinCount(char pinCount);
     bool getDirtyFlag();
