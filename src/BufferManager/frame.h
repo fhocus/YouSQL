@@ -19,11 +19,12 @@ public:
     void decrementPinCount();
     void dirty();
 
-    void setPinCount(char pinCount);
+    void setPinCount(char operation);
     bool getDirtyFlag();
     int getPinCount();
     bool getIsPinned();
     bool getReferenceBit();
+    std::vector<std::string> getData();
     void freeCountPin();
 
     //CLOCK

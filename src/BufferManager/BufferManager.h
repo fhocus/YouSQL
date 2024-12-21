@@ -1,27 +1,29 @@
+#pragma once
 #ifndef BUFFERMANAGER_H
 #define BUFFERMANAGER_H
 
 #include <string>
-#include <fstream>
-#include <iostream>
 #include <vector>
+#include <unordered_map>
+#include <iostream>
+#include <cassert>
 
 #include "BufferPool.h"
 
 class BufferManager
 {
 public:
-  BufferManager(std::string path);
+  BufferManager(int, int);
   ~BufferManager();
 
-  void read(std::string path);
-  void write(std::string path);
+  void requestPage(int, char, std::vector<std::string>);
+  void releasePage(int);
+  void pinPage(int);
+  void savePagetoDisk(int);
 
 private:
-  std::string path;
-  std::ifstream file;
-  std::ofstream fileOut;
-  BufferPool *bufferPool;
+  BufferPool bufferPool;
+  std::unordered_map<int, int> pageTable;
 };
 
 #endif

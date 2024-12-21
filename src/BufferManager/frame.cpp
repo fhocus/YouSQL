@@ -43,9 +43,9 @@ void Frame::dirty() {
     this->dirtyFlag = true;
 }
 
-void Frame::setPinCount(char pinCount) {
-    pinCount = pinCount - 'a' + 'A';
-    this->countPin.push(pinCount);
+void Frame::setPinCount(char operation) {
+    operation = std::toupper(operation);
+    this->countPin.push(operation);
 }
 
 bool Frame::getDirtyFlag() {
@@ -62,6 +62,10 @@ bool Frame::getIsPinned() {
 
 bool Frame::getReferenceBit() {
     return this->referenceBit;
+}
+
+std::vector<std::string> Frame::getData() {
+    return this->data;
 }
 
 void Frame::freeCountPin() {
